@@ -65,34 +65,32 @@ const images = [
 ];
 
 const galleryElement = document.querySelector(".gallery");
-
-function markupTemplate(imgObg) {
-  return `<li class="gallery-item">
-  <a class="gallery-link" href="${imgObg.original}">
-    <img
-      class="gallery-image"
-      src=${imgObg.preview}
-      data-source="large-image.jpg"
-      alt=${imgObg.description}
+const markup = images
+  .map(({ preview, original, description }) => {
+    return `<li class="gallery-item">
+    <a class="gallery-link" href="${original}">
+    <img 
+    class="gallery-image"
+    src=${preview}
+    data-source="${original}"
+    alt=${description}
     />
-  </a>
-</li>`;
-}
-
-function markupsTemplate(arr) {
-  return arr.map((elem) => markupTemplate(elem)).join("");
-}
-const markup = markupsTemplate(images);
+    </a>
+    </li>`;
+  })
+  .join("");
 
 galleryElement.insertAdjacentHTML("beforeend", markup);
 
-const imageLinks = document.querySelectorAll(".gallery-link");
-imageLinks.forEach((element) => {
-  element.addEventListener("click", (event) => {
-    event.preventDefault();
-  });
-});
+galleryElement.addEventListener("click", (event) => {
+  event.preventDefault();
+  if (event.target.nodeName !== "IMG") return;
 
-// const getImageOriginalElement = document.querySelector("gallery-link");
-// console.log(getImageOriginalElement); потрібно поставити слухач на клік по зображенню щоб прописати
-// event.preventDefault();
+  const originalImageUrl = event.target.dataset.source;
+
+  const instance = basicLightbox.create(`
+    <img src="${originalImageUrl}" width="800" height="600">
+`);
+
+  instance.show();
+});
